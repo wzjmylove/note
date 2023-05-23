@@ -240,6 +240,76 @@ history 记录了用户曾经浏览过的页面(URL),并可以实现浏览器前
 </body>
 ```
 
+### File System Access API
+
+https://www.qinwg.cn/n/fe/file-system-access-api.html
+
+该API有的浏览器不支持，如safari、Firefox
+
+可以通过检测window对象下是否具有以下方法来判断该浏览器是否支持API
+
+```js
+const supported = window?.showOpenFilePicker && window?.showDirectoryPicker;
+console.log(supported ? "支持" : "不支持");
+```
+
+#### `window.showOpenFilePicker()`
+
+> 作用：打开文件
+>
+> 语法：`window.showOpenFilePicker(multiple, excludeAcceptAllOption, types)`
+>
+> 参数：
+>
+> > multiple：布尔值；是否多选. 默认 `false`
+> >
+> > excludeAcceptAllOption：布尔值；是否排除`接受所有`选项. 默认 `false`
+> >
+> > types：数组；指定文件类型
+>
+> 返回：一个promise
+
+如：
+
+```js
+// 选择文件
+const openFile = (multiple = false) => {
+  window
+    .showOpenFilePicker({
+      multiple: multiple, // 多选
+      excludeAcceptAllOption: true,
+      types: [
+        {
+          description: "选择图片",
+          accept: {
+            "image/*": [".png", ".gif", ".jpeg", ".jpg"],
+          },
+        },
+      ],
+    })
+    .then((fileHandles) => {
+      console.log(fileHandles);
+      let files = fileHandles
+        .map((fileHandle) => fileHandle.name || "")
+        .join("\n");
+      console.log(`选择了 ${fileHandles.length} 个文件: \n${files}`);
+    })
+    .catch((err) => {
+      console.log("选择文件失败:", err);
+    });
+};
+```
+
+
+
+#### `window.showOpenSavePicker()`
+
+保存文件
+
+#### `window.showDirectoryPicker()`
+
+打开目录
+
 ------
 
 ## JS实现动画

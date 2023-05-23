@@ -37,7 +37,7 @@ yum install lsof
 
 > 列出指定用户打开的文件
 >
-> ```
+> ```shell
 > lsof -u <USER>
 > # 如 lsof -u root
 > ```
@@ -50,9 +50,9 @@ yum install git
 git --version
 ```
 
-
-
 ## nodejs
+
+### 安装
 
 参考：https://www.cnblogs.com/stx0529/articles/16984571.html
 
@@ -103,6 +103,59 @@ source /etc/profile
 node -v
 npm -v
 ```
+
+### 换源
+
+查看npm的下载地址
+
+```shell
+npm config get registry
+```
+
+方法一（不推荐）：将npm的下载地址换成国内镜像
+
+```shell
+npm config set registry https://registry.npm.taobao.org
+
+# 同理，换回源地址：
+# npm config set registry https://registry.npmjs.org/
+```
+
+方法二：利用cnpm下载国内镜像
+
+```shell
+npm install -g cnpm --registry=https://registry.npm.taobao.org
+
+# 后续就可以直接 cnpm install 插件名 
+```
+
+### npx
+
+注意npx是npm版本高于5.25.2才有的，方便在项目中使用全局包
+
+如果没有npx命令，可以 `npm install -g npx` 安装
+
+## TypeScript
+
+1、typescript编译器
+
+> 安装：npm install typescript
+>
+> 编译：npx tsc xxx.ts	（如果typescript是全局包，则可以省去npx）		（编译的意思：将ts编译为js）
+>
+> 缺点：
+>
+> > 1、当变量类型改变时，虽报错，但仍能编译成功
+> >
+> > 2、只编译成js，不能直接执行ts文件（即，其中的打印等操作不会显示）
+
+2、typescript-node
+
+> 安装：npm install typescript-node
+>
+> 使用：npx ts-node xxx.ts
+>
+> 优点：一步完成编译+执行
 
 ## pm2
 
@@ -277,10 +330,6 @@ mongod --shutdown -f /etc/mongodb.conf
 ps -ef | grep mongod
 ```
 
-
-
-
-
 ## yapi
 
 参考：https://www.wenjiangs.com/doc/25gwef55#f80abc8cc8aab6c354beca52b3781a4e
@@ -330,5 +379,188 @@ cd  {项目目录}
 yapi ls //查看版本号列表
 yapi update //升级到最新版本
 yapi update -v v1.1.0 //升级到指定版本
+```
+
+### 使用
+
+利用yapi-to-typescript工具包，自动生成请求接口函数
+
+1、安装yapi-to-typescript工具包
+
+```shell
+yarn add -D yapi-to-typescript	# 推进yarn安装，npm安装容器出现init出错
+# 或者
+npm i yapi-to-typescript -d
+```
+
+2、配置工具，会在项目根目录下自动生成yyt.config.ts配置文件
+
+```shell
+npx ytt init -c ytt.config.ts
+# 注意npx是npm版本高于5.25.2才有的，方便在项目中使用全局包
+# 如果没有npx命令，可以 npm install -g npx 安装
+# 注意一定要生成ytt.config.ts文件或js文件，否则npm run ytt会报错
+```
+
+生成的ytt.config.ts文件如下：
+
+```ts
+import { defineConfig } from 'yapi-to-typescript'
+
+export default defineConfig([
+  {
+    serverUrl: 'http://foo.bar',		// 更改为自己yapi的地址，如http://47.108.211.92:701
+    typesOnly: false,
+    target: 'typescript',
+    reactHooks: {
+      enabled: false,
+    },
+    prodEnvName: 'production',
+    outputFilePath: 'src/api/index.ts',
+    requestFunctionFilePath: 'src/api/request.ts',
+    dataKey: 'data',
+    projects: [
+      {
+        token: 'hello',				// 更改为项目token
+        categories: [
+          {
+            id: 0,					// 每次更新的接口：0 表示该项目下的所有接口，[1560, 1561]等之类的表示该项目下url中后缀为1560、1561的接口
+            getRequestFunctionName(interfaceInfo, changeCase) {
+              // 以接口全路径生成请求函数名
+              return changeCase.camelCase(interfaceInfo.path)
+
+              // 若生成的请求函数名存在语法关键词报错、或想通过某个关键词触发 IDE 自动引入提示，可考虑加前缀，如:
+              // return changeCase.camelCase(`api_${interfaceInfo.path}`)
+
+              // 若生成的请求函数名有重复报错，可考虑将接口请求方式纳入生成条件，如:
+              // return changeCase.camelCase(`${interfaceInfo.method}_${interfaceInfo.path}`)
+            },
+          },
+        ],
+      },
+    ],
+  },
+])
+```
+
+3、运行ytt
+
+```shell
+npm run ytt
+# 或者
+yarn ytt
+```
+
+此时就会在"./src/api"路径下生成对应的接口函数，后续项目中可以直接import后使用
+
+## Docker
+
+参考：“笔记\笔记\非前端\Docker\01-Docker”
+
+### 安装
+
+1、环境查看
+
+```shell
+# 系统内核是3.10及以上
+uname -r
+
+3.10.0-1160.49.1.el7.x86_64
+```
+
+```shell
+# 系统版本 尽量是CentOS7
+cat /etc/os-release
+
+NAME="CentOS Linux"
+VERSION="7 (Core)"
+ID="centos"
+ID_LIKE="rhel fedora"
+VERSION_ID="7"
+PRETTY_NAME="CentOS Linux 7 (Core)"
+ANSI_COLOR="0;31"
+CPE_NAME="cpe:/o:centos:centos:7"
+HOME_URL="https://www.centos.org/"
+BUG_REPORT_URL="https://bugs.centos.org/"
+
+CENTOS_MANTISBT_PROJECT="CentOS-7"
+CENTOS_MANTISBT_PROJECT_VERSION="7"
+REDHAT_SUPPORT_PRODUCT="centos"
+REDHAT_SUPPORT_PRODUCT_VERSION="7"
+```
+
+2、跟着文档来
+
+[docker安装文档 CentOS版本](https://docs.docker.com/engine/install/centos/)
+
+```shell
+# 1.卸载旧版本
+yum remove docker \
+                  docker-client \
+                  docker-client-latest \
+                  docker-common \
+                  docker-latest \
+                  docker-latest-logrotate \
+                  docker-logrotate \
+                  docker-engine
+                  
+# 2.安装需要的安装包
+yum install -y yum-utils
+	# 成功会显示 Nothing to do
+
+# 3.设置镜像仓库
+yum-config-manager \
+    --add-repo \
+    https://download.docker.com/linux/centos/docker-ce.repo		# 默认是国外的，尽量用国内的镜像，如百度搜索 docker阿里云镜像地址 
+    # 阿里云：http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+    # 注意：yum需要python2执行，如果系统默认是3，需要vim /usr/bin/yum-config-manager进入，编辑第一行为 /usr/bin/python2 -tt 
+    # 原因：yum对python依赖版本
+    
+# 4.更新yum软件包索引（建议做，但并非必做）
+yum makecache fast	# makecache是清空缓存
+    
+# 5.安装引擎（不需要官方文档上的‘配置’这一步骤）
+yum install docker-ce docker-ce-cli containerd.io docker-compose-plugin		# ce是社区，ee是企业
+
+# 6.启动docker
+systemctl start docker
+	#可以通过docker version 判断是否启动成功
+	
+# 7.运行镜像
+docker run hello-world	# 此处以hello-world镜像为例
+```
+
+![docker-run-helloWorld](.\image\docker-run-helloWorld.png)
+
+<img src=".\image\docker-run-运行原理.png" alt="docker-run-运行原理" style="zoom: 67%;" />
+
+```shell
+# 8.查看下载的镜像
+docker images
+```
+
+### 卸载
+
+```shell
+# 1.卸载依赖
+yum remove docker-ce docker-ce-cli containerd.io docker-compose-plugin
+# 2.删除资源
+rm -rf /var/lib/docker
+rm -rf /var/lib/containerd
+```
+
+### 阿里云镜像加速
+
+去阿里云的容器镜像服务里面
+
+```shell
+sudo mkdir -p /etc/docker
+sudo tee /etc/docker/daemon.json <<-'EOF'
+{
+  "registry-mirrors": ["https://qy1d97yw.mirror.aliyuncs.com"]
+}
+EOF
+sudo systemctl daemon-reload
+sudo systemctl restart docker
 ```
 

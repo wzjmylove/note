@@ -43,7 +43,7 @@ Docker是一个Client - Server结构的系统 ，Docker的守护进程运行在�
 
 DockerServer接收到Docker - Client 的指令，就会执行这个命令
 
-![docker-概念-底层原理](E:\笔记\笔记\image\docker-概念-底层原理.png)
+![docker-概念-底层原理](.\image\docker-概念-底层原理.png)
 
 ## 安装
 
@@ -134,9 +134,9 @@ systemctl start docker
 docker run hello-world	# 此处以hello-world镜像为例
 ```
 
-![docker-run-helloWorld](..\image\docker-run-helloWorld.png)
+![docker-run-helloWorld](.\image\docker-run-helloWorld.png)
 
-<img src="E:..\image\docker-run-运行原理.png" alt="docker-run-运行原理" style="zoom: 67%;" />
+<img src=".\image\docker-run-运行原理.png" alt="docker-run-运行原理" style="zoom: 67%;" />
 
 ```shell
 # 8.查看下载的镜像

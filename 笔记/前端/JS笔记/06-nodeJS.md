@@ -1,8 +1,16 @@
+# 锚点
+
+[process对象](#process)
+
+[import和require的不同](###require和import的不同)
+
 # node
 
 简介：就是一个运行环境，该引擎就是V8引擎，但不同于浏览器，其是JS的后端运行环境
 
 内置API：fs、path、http、quertstring（没有DOM、BOM、AJAX）
+
+规范：commonJS，不支持esModule规范
 
 ## 终端
 
@@ -27,6 +35,10 @@
 > nodemon		它能够监听项目文件的变动，当代码被修改后，nodemon 会自动帮我们重启项目
 
 ------
+
+## process
+
+process是node中的一个全局对象，类似global，用来管理进程，如管理.env文件（环境变量文件）
 
 ## fs文件系统模块
 
@@ -377,8 +389,8 @@ require() 方法，可以加载需要的内置模块、用户自定义模块、�
 
 > 1、遵循规范
 >
-> - `require` 是 AMD规范引入方式
-> - `import`是es6的一个语法标准，如果要兼容浏览器的话必须转化成es5的语法
+> - `require` 是 AMD规范引入方式（commonJS）
+> - `import`是es6的一个语法标准（es6Module），如果要兼容浏览器的话必须转化成es5的语法
 >
 > 2、调用时间
 >
@@ -388,7 +400,7 @@ require() 方法，可以加载需要的内置模块、用户自定义模块、�
 > 3、本质
 >
 > - `require`是赋值过程，将需要导出的内容赋值给变量，且最终导出的内容永远是一个对象
-> - `import`是解构过程（但是目前所有的引擎都还没有实现import，我们在node中使用babel支持ES6），最终导出的内容是定义的内容，定义number导出就是number,定义字符串就是字符串
+> - `import`是解构过程（但是目前所有的引擎都还没有实现import，我们在node中使用babel支持ES6），最终导出的内容是定义的内容，定义number导出就是number，定义字符串就是字符串
 
 ### 模块作用域
 
@@ -1211,3 +1223,9 @@ app.use(mv);
 > > ```
 >
 > 注：express 内置的 express.urlencoded 中间件，就是基于 body-parser 这个第三方中间件进一步封装出来的
+
+
+
+
+
+<a id="an">REF</a>
